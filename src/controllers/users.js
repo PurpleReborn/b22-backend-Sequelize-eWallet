@@ -1,5 +1,6 @@
 const { response } = require('../helpers/standardResponse')
 const UserModel = require('../models/users')
+const TokenFCM = require('../models/tokenFCM')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const {Op} = require('sequelize')
@@ -207,5 +208,24 @@ exports.detailUser = async (req,res)=> {
     success: true,
     message: 'List of Users',
     results: user
+  })
+}
+
+exports.registerToken = async (req, res) => {
+  const { token } = req.body
+  const { id } = req.authUser
+  const [fcm, created] = await TokenFCM.findOrCreate({
+    where: { token },
+    defaults: {
+      userId: id
+    }
+  })
+  if (!created) {
+    fcm.userId = id
+    await fcm.save()
+  }
+  return res.json({
+    success: true,
+    message: 'Token saved'
   })
 }

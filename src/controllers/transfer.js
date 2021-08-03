@@ -1,13 +1,27 @@
 const TransferModel = require('../models/transfer')
 const UserModel = require('../models/users')
+const TokenFCM = require('../models/tokenFCM')
+const firebase = require('../helpers/firebase')
 // const { Op } = require('sequelize')
 
 exports.createTransfer = async (req, res) => {
   const userDetailRecipient = await UserModel.findOne({
     where: {
       phone: req.body.phoneNumberRecipient
-    }
+    },
+    include: TokenFCM
   })
+  if(userDetailRecipient === null){
+      return res.status(404).json({
+      success: false,
+      message: 'User Not Found'
+    })
+  }
+  // const userDetailRecipient = await UserModel.findOne({
+  //   where: {
+  //     phone: req.body.phoneNumberRecipient
+  //   }
+  // })
   if(userDetailRecipient === null){
       return res.status(404).json({
       success: false,
@@ -44,14 +58,14 @@ exports.createTransfer = async (req, res) => {
     await userSender.save()
     const trx = await TransferModel.create(data)
 
-    // if(userDetailRecipient.token_fcm !== null){
-    //   firebase.messaging().sendToDevice(userDetailRecipient.token_fcm.token, {
-    //     notification: {
-    //       title: 'OAO',
-    //       body: `${userSender.name} mengirimkan dana sebesar ${Number(req.body.deductedBalance).toLocaleString('en')} melalui aplikasi OAO`
-    //     }
-    //   })
-    // }
+    if(userDetailRecipient.token_fcm !== null){
+      firebase.messaging().sendToDevice(userDetailRecipient.token_fcm.token, {
+        notification: {
+          title: 'OVO',
+          body: `${userSender.name} transfer saldo sebesar ${Number(req.body.deductedBalance).toLocaleString('en')} melalui aplikasi OVO`
+        }
+      })
+    }
 
     return res.json({
       success: true,
