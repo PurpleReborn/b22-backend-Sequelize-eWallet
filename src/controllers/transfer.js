@@ -58,14 +58,14 @@ exports.createTransfer = async (req, res) => {
     await userSender.save()
     const trx = await TransferModel.create(data)
 
-    if(userDetailRecipient.token_fcm !== null){
+    
       firebase.messaging().sendToDevice(userDetailRecipient.token_fcm.token, {
         notification: {
           title: 'OVO',
           body: `${userSender.name} transfer saldo sebesar ${Number(req.body.deductedBalance).toLocaleString('en')} melalui aplikasi OVO`
         }
       })
-    }
+    
 
     return res.json({
       success: true,
