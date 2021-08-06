@@ -22,6 +22,7 @@
 6. Open Postman desktop application or Chrome web app extension that has installed before
 7. Choose HTTP Method and enter request url.(ex. localhost:8080/)
 8. You can see all the end point [here](https://www.getpostman.com/collections/e5d8e63879241482847a)
+9. For mySql [here](https://drive.google.com/file/d/18V_61LOT8wzTE1ayHLO2zV0WIbm1UaAr/view)
 
 ## Set up .env file
 
