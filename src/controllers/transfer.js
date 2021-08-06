@@ -1,7 +1,7 @@
 const TransferModel = require('../models/transfer')
 const UserModel = require('../models/users')
 const TokenFCM = require('../models/tokenFCM')
-const firebase = require('../helpers/firebase')
+// const firebase = require('../helpers/firebase')
 // const { Op } = require('sequelize')
 
 exports.createTransfer = async (req, res) => {
@@ -59,12 +59,12 @@ exports.createTransfer = async (req, res) => {
     const trx = await TransferModel.create(data)
 
     
-      firebase.messaging().sendToDevice(userDetailRecipient.token_fcm.token, {
-        notification: {
-          title: 'OVO',
-          body: `${userSender.name} transfer saldo sebesar ${Number(req.body.deductedBalance).toLocaleString('en')} melalui aplikasi OVO`
-        }
-      })
+      // firebase.messaging().sendToDevice(userDetailRecipient.token_fcm.token, {
+      //   notification: {
+      //     title: 'OVO',
+      //     body: `${userSender.name} transfer saldo sebesar ${Number(req.body.deductedBalance).toLocaleString('en')} melalui aplikasi OVO`
+      //   }
+      // })
     
 
     return res.json({
