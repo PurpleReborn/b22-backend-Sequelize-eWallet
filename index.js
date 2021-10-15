@@ -12,7 +12,9 @@ app.use(APP_UPLOAD_ROUTE, express.static(APP_UPLOAD_PATH))
 app.use(cors())
 app.use('/',router)
 
-app.listen(APP_PORT, ()=>{
+const port = APP_PORT || 8080
+
+app.listen(port, ()=>{
   console.log(`App running on port ${APP_PORT}`)
   sequelize.sync()
 })

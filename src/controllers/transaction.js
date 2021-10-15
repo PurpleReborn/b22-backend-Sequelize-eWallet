@@ -9,10 +9,10 @@ exports.createTransaction = async(req, res) =>{
   if (typeof req.body.trxFee === 'string') {
     req.body.trxFee = parseInt(req.body.trxFee)
   }
-  if(req.body.deductedBalance < 10000){
+  if(req.body.deductedBalance < 5000){
     return res.status(401).json({
       success: false,
-      message: 'mininum transfer 10.000'
+      message: 'mininum transfer 5.000'
     })
   }
   if(req.body.deductedBalance > user.balance){

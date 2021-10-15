@@ -145,6 +145,98 @@ exports.updateUser = async (req, res) => {
   }
 }
 
+exports.Code = async (req, res) => {
+  const { password } = req.body
+  const user = await UserModel.findByPk(req.authUser.id)
+  const compare = await bcrypt.compare(password, user.password)
+  if(req.body.password.length >= 8){
+  if(compare){
+    return res.json({
+      success: true,
+      message: 'Password Match',
+    })
+  } else {
+    return res.status(404).json({
+      success: false,
+      message: 'Your Pin Wrong'
+    })
+  }
+}else{
+  return res.status(404).json({
+    success: false,
+    message: 'Password harus lebih dari 8'
+  })
+}
+}
+
+exports.updateCode = async (req, res) => {
+  const user = await UserModel.findByPk(req.authUser.id)
+  if(user){
+    req.body.password = await bcrypt.hash(req.body.password, await bcrypt.genSalt())
+  if(req.body.password.length >= 8){
+    // const { password } = req.body
+    user.set(req.body)
+    await user.save()
+    res.json({
+      success: true,
+      message: 'Change password Successfully',
+      results: user
+    })
+  }else{
+    res.json({
+      success: false,
+      message: 'Password harus lebih dari 8'
+    })
+  }}else{
+      res.json({
+      success: false,
+      message: 'User not found'
+    })
+  }
+  // if (user) {
+  //   if (req.file) {
+  //     req.body.picture = req.file
+  //       ? `${APP_UPLOAD_ROUTE}/${req.file.filename}`
+  //       : null
+  //     user.set(req.body)
+  //     await user.save()
+  //     if (
+  //       user.picture !== null &&
+  //       !user.picture.startsWith('http')
+  //     ) {
+  //       user.picture = `${APP_URL}${user.picture}`
+  //     }
+  //     return res.json({
+  //       success: true,
+  //       message: 'User Updated Successfully',
+  //       results: user
+  //     })
+  //   }
+  //    else {
+  //     user.set(req.body)
+  //     await user.save()
+  //     if (
+  //       user.picture !== null &&
+  //       !user.picture.startsWith('http')
+  //     ) {
+  //       user.picture = `${APP_URL}${user.picture}`
+  //     }
+  //     return res.json({
+  //       success: true,
+  //       message: 'User Updated Successfully',
+  //       results: user
+  //     })
+  //   }
+  // } else {
+  //   res.json({
+  //     success: false,
+  //     message: 'User not found'
+  //   })
+  // }
+}
+
+
+
 exports.deleteUser = async (req,res)=>{
   const {id} = req.params
   const user = await UserModel.findByPk(id)

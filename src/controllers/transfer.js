@@ -1,8 +1,9 @@
 const TransferModel = require('../models/transfer')
 const UserModel = require('../models/users')
 const TokenFCM = require('../models/tokenFCM')
+const { APP_URL } = process.env
 // const firebase = require('../helpers/firebase')
-// const { Op } = require('sequelize')
+const { Op } = require('sequelize')
 
 exports.createTransfer = async (req, res) => {
   const userDetailRecipient = await UserModel.findOne({
@@ -82,7 +83,7 @@ exports.createTransfer = async (req, res) => {
 
 exports.getTransferByIdSender = async (req, res) => {
   const {id : userIdSender} = req.authUser;
-  let {sort = 'ASC', limit = 7, page = 1 } = req.query
+  let {search = '',sort, limit = 5, page = 1 } = req.query
   let order = []
   if (typeof sort === 'object') {
     const key = Object.keys(sort)[0]
@@ -100,8 +101,20 @@ exports.getTransferByIdSender = async (req, res) => {
   if (typeof page === 'string') {
     page = parseInt(page)
   }
+  const count = await TransferModel.count({
+    where: {
+      userIdSender: {
+        [Op.substring]: req.authUser.id
+      }
+    }
+  })
+  const nextPage = page < Math.ceil(count / limit) ? `${APP_URL}/transfer/historySender?page=${page + 1}` : null
+  const prevPage = page > 1 ? `${APP_URL}/transfer/historySender?page=${page - 1}` : null
   const trx = await TransferModel.findAll({
     where: {
+      description: {
+        [Op.substring]: search
+      },
       userIdSender: userIdSender
     },
     include: [
@@ -128,7 +141,9 @@ exports.getTransferByIdSender = async (req, res) => {
       pageInfo: {
         totalPage: Math.ceil(count / limit),
         currentPage: page,
-        limitData: limit
+        limitData: limit,
+        nextLink: nextPage,
+        prevLink: prevPage
       }
     })
   } else {
@@ -141,7 +156,7 @@ exports.getTransferByIdSender = async (req, res) => {
 
 exports.getTransferByIdRecipient = async (req, res) => {
   const {id : userIdRecipient} = req.authUser;
-  let {sort = 'ASC', limit = 7, page = 1 } = req.query
+  let {sort = 'ASC', limit = 6, page = 1 } = req.query
   let order = []
   if (typeof sort === 'object') {
     const key = Object.keys(sort)[0]
