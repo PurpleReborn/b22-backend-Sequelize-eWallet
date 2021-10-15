@@ -11,12 +11,12 @@ app.use(express.urlencoded({extended: false}))
 app.use(APP_UPLOAD_ROUTE, express.static(APP_UPLOAD_PATH))
 app.use(cors())
 app.use('/',router)
-app.get('/', (req, res) => {
-  return res.json({
-    success: true,
-    message: 'Backend is running well'
-  })
-})
+// app.get('/', (req, res) => {
+//   return res.json({
+//     success: true,
+//     message: 'Backend is running well'
+//   })
+// })
 
 const port = PORT || 8080
 
