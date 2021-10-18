@@ -38,13 +38,13 @@ exports.login = async (req, res) => {
         result: token
       })
     } else {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
         message: 'Your password Wrong'
       })
     }
   } else {
-    return res.status(404).json({
+    return res.status(400).json({
       success: false,
       message: 'Account not found'
     })
